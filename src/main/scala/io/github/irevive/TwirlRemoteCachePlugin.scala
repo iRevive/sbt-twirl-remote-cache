@@ -14,32 +14,31 @@ object TwirlRemoteCachePlugin extends AutoPlugin {
   override def trigger  = allRequirements
 
   object autoImport {
-    lazy val Twirl = config("twirl")
+    lazy val TwirlCache = config("twirlCache")
 
-    lazy val twirlCacheArtifactName = settingKey[String]("The artifact name")
-    lazy val twirlCachePull         = taskKey[Unit]("Push generated Twirl templates to remote cache")
-    lazy val twirlCachePush         = taskKey[Unit]("Pull Twirl templates from remote cache")
-    lazy val twirlCache             = taskKey[Unit]("Produce Twirl cache")
-    lazy val twirlCacheRemote       = taskKey[File]("Twirl remote cache directory")
+    lazy val twirlRemoteCacheArtifactName = settingKey[String]("The artifact name")
+    lazy val twirlRemoteCacheDir          = settingKey[File]("Twirl remote cache directory")
+    lazy val twirlPullRemoteCache         = taskKey[Unit]("Push generated Twirl templates to remote cache")
+    lazy val twirlPushRemoteCache         = taskKey[Unit]("Pull Twirl templates from remote cache")
   }
 
   import autoImport._
 
   override lazy val projectConfigurations: Seq[Configuration] = Seq(
-    Twirl
+    TwirlCache
   )
 
   override lazy val projectSettings: Seq[Setting[_]] =
     Seq(
-      twirlCacheArtifactName := "twirl-templates",
+      twirlRemoteCacheArtifactName := "twirl-templates",
       pushRemoteCacheConfiguration / remoteCacheArtifacts += {
-        val art              = (Twirl / artifact).value
-        val packaged         = Twirl / packageCache
+        val art              = (TwirlCache / artifact).value
+        val packaged         = TwirlCache / packageCache
         val extractDirectory = crossTarget.value / "twirl" / "main"
 
         CustomRemoteCacheArtifact(art, packaged, extractDirectory, preserveLastModified = false)
       },
-      twirlCacheRemote := {
+      twirlRemoteCacheDir := {
         val remote          = pushRemoteCacheTo.value
         val module          = moduleName.value
         val scalaBinVersion = scalaBinaryVersion.value
@@ -51,9 +50,10 @@ object TwirlRemoteCachePlugin extends AutoPlugin {
 
         base / module / scalaBinVersion
       },
-      twirlCachePush := {
+      twirlPushRemoteCache := {
+        val _         = (Compile / TwirlKeys.compileTemplates).value
         val log       = streams.value.log
-        val cacheDir  = twirlCacheRemote.value
+        val cacheDir  = twirlRemoteCacheDir.value
         val baseDir   = crossTarget.value / "twirl"
         val cacheId   = remoteCacheId.value
         val templates = baseDir.globRecursive("*.template.scala").pair(Path.relativeTo(baseDir))
@@ -63,10 +63,10 @@ object TwirlRemoteCachePlugin extends AutoPlugin {
 
         log.info(s"Published Twirl cache to $output")
       },
-      twirlCachePull := {
+      twirlPullRemoteCache := {
         val log          = streams.value.log
         val baseDir      = crossTarget.value / "twirl"
-        val cacheDir     = twirlCacheRemote.value
+        val cacheDir     = twirlRemoteCacheDir.value
         val candidateIds = remoteCacheIdCandidates.value
 
         candidateIds.map(id => cacheDir / s"$id.zip").find(_.exists) match {
@@ -81,10 +81,10 @@ object TwirlRemoteCachePlugin extends AutoPlugin {
     ) ++ cacheSettings
 
   def cacheSettings: Seq[Def.Setting[_]] =
-    inConfig(Twirl)(
+    inConfig(TwirlCache)(
       Seq(
         packageOptions := {
-          val n       = name.value + "-" + twirlCacheArtifactName.value
+          val n       = name.value + "-" + twirlRemoteCacheArtifactName.value
           val ver     = version.value
           val org     = organization.value
           val orgName = organizationName.value
@@ -103,7 +103,7 @@ object TwirlRemoteCachePlugin extends AutoPlugin {
         },
         packageConfiguration := Defaults.packageConfigurationTask.value,
         packageCache         := Defaults.packageTask.value,
-        artifact             := Artifact(moduleName.value, twirlCacheArtifactName.value),
+        artifact             := Artifact(moduleName.value, twirlRemoteCacheArtifactName.value),
         packagedArtifact     := (artifact.value -> packageCache.value),
         artifactPath         := Defaults.artifactPathSetting(artifact).value,
         artifactName         := Artifact.artifactName

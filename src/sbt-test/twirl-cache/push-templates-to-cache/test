@@ -1,0 +1,7 @@
+> twirlPushRemoteCache
+$ exists target/scala-2.12/twirl/main/html/test.template.scala
+$ exists root/2.12/static-id.zip
+> clean
+$ absent target/scala-2.12/twirl/main/html/test.template.scala
+> twirlPullRemoteCache
+$ exists target/scala-2.12/twirl/main/html/test.template.scala
