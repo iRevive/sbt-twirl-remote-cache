@@ -8,7 +8,8 @@ The plugin creates an archive of the **generated** Twirl templates and pushes it
 Works out of the box with Play Framework.  
 
 **Note:** caching of the **generated** files can lead to various problems, e.g. non-reproducible builds.  
-Even though it works well for a project with multiple subprojects, where the base templates do not change often.
+On the other hand, such an approach is suitable for a project with multiple subprojects, where the templates do not change often.
+Therefore use with caution.
 
 ## Quick Start
 
