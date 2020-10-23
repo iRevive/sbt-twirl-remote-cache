@@ -3,8 +3,8 @@
 [![Build Status](https://github.com/iRevive/sbt-twirl-remote-cache/workflows/CI/badge.svg)](https://github.com/iRevive/sbt-twirl-remote-cache/actions?query=branch%3Amaster+workflow%3ACI+)
 [![Maven Version](https://maven-badges.herokuapp.com/maven-central/io.github.irevive/sbt-twirl-remote-cache/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.irevive/sbt-twirl-remote-cache)
 
-sbt-twirl-remote-cache is an SBT plugin that actives support of the remote cache introduced in SBT 1.4.0+.    
-The plugin creates an archive of the **generated** Twirl templates and pushes it to the remote cache directory/repository.    
+sbt-twirl-remote-cache is an SBT plugin that brings support of the remote caching introduced in SBT 1.4.0.    
+The plugin creates an archive of the **generated** Twirl templates and pushes it to the directory/remote repository.    
 Works out of the box with Play Framework.  
 
 **Note:** caching of the **generated** files can lead to various problems, e.g. non-reproducible builds.  
