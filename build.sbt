@@ -11,3 +11,4 @@ lazy val root = project
     licenses            := List("MIT" -> url("http://opensource.org/licenses/MIT")),
     developers          := List(Developer("iRevive", "Maksim Ochenashko", "", url("https://github.com/iRevive")))
   )
+  .settings(addSbtPlugin("com.typesafe.sbt" % "sbt-twirl" % "1.5.0"))
