@@ -30,7 +30,7 @@ object TwirlRemoteCachePlugin extends AutoPlugin {
 
   override lazy val projectSettings: Seq[Setting[_]] =
     Seq(
-      twirlRemoteCacheArtifactName := "twirl-templates",
+      twirlRemoteCacheArtifactName                        := "twirl-templates",
       pushRemoteCacheConfiguration / remoteCacheArtifacts += {
         val art              = (TwirlCache / artifact).value
         val packaged         = TwirlCache / packageCache
